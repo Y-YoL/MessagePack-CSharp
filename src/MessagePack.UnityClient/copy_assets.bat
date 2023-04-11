@@ -8,6 +8,7 @@
 
 @pushd %~dp0
 
+echo F | xcopy "..\..\bin\MessagePack\release\netstandard2.0\publish\System.Collections.Immutable.dll" ".\Assets\Plugins\System.Collections.Immutable.dll" /Y /I
 echo F | xcopy "..\..\bin\MessagePack\release\netstandard2.0\publish\System.Runtime.CompilerServices.Unsafe.dll" ".\Assets\Plugins\System.Runtime.CompilerServices.Unsafe.dll" /Y /I
 echo F | xcopy "..\..\bin\MessagePack\release\netstandard2.0\publish\Microsoft.NET.StringTools.dll" ".\Assets\Plugins\Microsoft.NET.StringTools.dll" /Y /I
 

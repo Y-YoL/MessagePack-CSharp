@@ -18,5 +18,6 @@ if ! [[ -d "${SCRIPT_DIR}/Assets/Plugins" ]] ; then
   mkdir -p ${SCRIPT_DIR}/Assets/Plugins
 fi
 
+cp ${SCRIPT_DIR}/../../bin/MessagePack/${BUILDCONFIGURATION}/netstandard2.0/publish/System.Collections.Immutable.dll ${SCRIPT_DIR}/Assets/Plugins/System.Collections.Immutable.dll
 cp ${SCRIPT_DIR}/../../bin/MessagePack/${BUILDCONFIGURATION}/netstandard2.0/publish/System.Runtime.CompilerServices.Unsafe.dll ${SCRIPT_DIR}/Assets/Plugins/System.Runtime.CompilerServices.Unsafe.dll
 cp ${SCRIPT_DIR}/../../bin/MessagePack/${BUILDCONFIGURATION}/netstandard2.0/publish/Microsoft.NET.StringTools.dll ${SCRIPT_DIR}/Assets/Plugins/Microsoft.NET.StringTools.dll

@@ -318,11 +318,11 @@ namespace MessagePack.Internal
         {
             BuiltinResolver.Instance, // Try Builtin
             AttributeFormatterResolver.Instance, // Try use [MessagePackFormatter]
+            ImmutableCollection.ImmutableCollectionResolver.Instance,
 
 #if UNITY_2018_3_OR_NEWER
             MessagePack.Unity.UnityResolver.Instance,
 #else
-            ImmutableCollection.ImmutableCollectionResolver.Instance,
             CompositeResolver.Create(ExpandoObjectFormatter.Instance),
 #endif
 
