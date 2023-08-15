@@ -2,6 +2,7 @@
 
 #if ENABLE_UNITY_MATHEMATICS
 using System;
+using System.Runtime.InteropServices;
 using MessagePack.Formatters;
 using global::Unity.Mathematics;
 
@@ -35,7 +36,7 @@ namespace MessagePack.Unity.Mathematics
 
             throw new InvalidOperationException();
         }
-        
+
         protected abstract TResult Create(TValue x);
         protected abstract TResult Create(TValue x, TValue y);
     }
@@ -69,7 +70,7 @@ namespace MessagePack.Unity.Mathematics
 
             throw new InvalidOperationException();
         }
-        
+
         protected abstract TResult Create(TValue x);
         protected abstract TResult Create(TValue x, TValue y, TValue z);
     }
@@ -104,9 +105,39 @@ namespace MessagePack.Unity.Mathematics
 
             throw new InvalidOperationException();
         }
-        
+
         protected abstract TResult Create(TValue x);
         protected abstract TResult Create(TValue x, TValue y, TValue z, TValue w);
+    }
+
+    public class MatrixFormatterBase<T>
+        where T : struct
+    {
+        protected void Serialize(ref MessagePackWriter writer, ReadOnlySpan<T> value, MessagePackSerializerOptions options)
+        {
+            writer.WriteArrayHeader(value.Length);
+            var formatter = options.Resolver.GetFormatterWithVerify<T>();
+            foreach (var item in value)
+            {
+                formatter.Serialize(ref writer, item, options);
+            }
+        }
+
+        protected void Deserialize(ref MessagePackReader reader, Span<T> value, int length, MessagePackSerializerOptions options)
+        {
+            var formatter = options.Resolver.GetFormatterWithVerify<T>();
+            for (var i = 0; i < length; i++)
+            {
+                if (value.Length > i)
+                {
+                    value[i] = formatter.Deserialize(ref reader, options);
+                }
+                else
+                {
+                    reader.Skip();
+                }
+            }
+        }
     }
 
     public sealed class Int2Formatter : Vector2FormatterBase<int2, int>
@@ -406,6 +437,1122 @@ namespace MessagePack.Unity.Mathematics
         protected override half4 Create(half x, half y, half z, half w)
         {
             return new half4(x, y, z, w);
+        }
+    }
+
+    public sealed class Int2x2Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int2x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, int2x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 4);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int2x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int2x2(v);
+                default:
+                    var value = default(int2x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 4);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int2x3Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int2x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, int2x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int2x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int2x3(v);
+                default:
+                    var value = default(int2x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int2x4Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int2x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, int2x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int2x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int2x4(v);
+                default:
+                    var value = default(int2x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int3x2Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int3x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, int3x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int3x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int3x2(v);
+                default:
+                    var value = default(int3x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int3x3Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int3x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, int3x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 9);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int3x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int3x3(v);
+                default:
+                    var value = default(int3x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 9);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int3x4Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int3x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, int3x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int3x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int3x4(v);
+                default:
+                    var value = default(int3x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int4x2Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int4x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, int4x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int4x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int4x2(v);
+                default:
+                    var value = default(int4x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int4x3Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int4x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, int4x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int4x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int4x3(v);
+                default:
+                    var value = default(int4x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Int4x4Formatter : MatrixFormatterBase<int>, IMessagePackFormatter<int4x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, int4x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 16);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public int4x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<int>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new int4x4(v);
+                default:
+                    var value = default(int4x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 16);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint2x2Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint2x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint2x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 4);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint2x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint2x2(v);
+                default:
+                    var value = default(uint2x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 4);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint2x3Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint2x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint2x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint2x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint2x3(v);
+                default:
+                    var value = default(uint2x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint2x4Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint2x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint2x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint2x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint2x4(v);
+                default:
+                    var value = default(uint2x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint3x2Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint3x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint3x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint3x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint3x2(v);
+                default:
+                    var value = default(uint3x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint3x3Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint3x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint3x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 9);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint3x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint3x3(v);
+                default:
+                    var value = default(uint3x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 9);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint3x4Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint3x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint3x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint3x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint3x4(v);
+                default:
+                    var value = default(uint3x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint4x2Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint4x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint4x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint4x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint4x2(v);
+                default:
+                    var value = default(uint4x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint4x3Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint4x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint4x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint4x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint4x3(v);
+                default:
+                    var value = default(uint4x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Uint4x4Formatter : MatrixFormatterBase<uint>, IMessagePackFormatter<uint4x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, uint4x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 16);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public uint4x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<uint>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new uint4x4(v);
+                default:
+                    var value = default(uint4x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 16);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float2x2Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float2x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, float2x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 4);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float2x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float2x2(v);
+                default:
+                    var value = default(float2x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 4);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float2x3Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float2x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, float2x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float2x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float2x3(v);
+                default:
+                    var value = default(float2x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float2x4Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float2x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, float2x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float2x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float2x4(v);
+                default:
+                    var value = default(float2x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float3x2Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float3x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, float3x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float3x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float3x2(v);
+                default:
+                    var value = default(float3x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float3x3Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float3x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, float3x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 9);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float3x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float3x3(v);
+                default:
+                    var value = default(float3x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 9);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float3x4Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float3x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, float3x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float3x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float3x4(v);
+                default:
+                    var value = default(float3x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float4x2Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float4x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, float4x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float4x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float4x2(v);
+                default:
+                    var value = default(float4x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float4x3Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float4x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, float4x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float4x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float4x3(v);
+                default:
+                    var value = default(float4x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Float4x4Formatter : MatrixFormatterBase<float>, IMessagePackFormatter<float4x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, float4x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 16);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public float4x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<float>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new float4x4(v);
+                default:
+                    var value = default(float4x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 16);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double2x2Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double2x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, double2x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 4);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double2x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double2x2(v);
+                default:
+                    var value = default(double2x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 4);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double2x3Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double2x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, double2x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double2x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double2x3(v);
+                default:
+                    var value = default(double2x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double2x4Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double2x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, double2x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double2x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double2x4(v);
+                default:
+                    var value = default(double2x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double3x2Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double3x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, double3x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 6);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double3x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double3x2(v);
+                default:
+                    var value = default(double3x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 6);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double3x3Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double3x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, double3x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 9);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double3x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double3x3(v);
+                default:
+                    var value = default(double3x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 9);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double3x4Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double3x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, double3x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double3x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double3x4(v);
+                default:
+                    var value = default(double3x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double4x2Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double4x2>
+    {
+        public void Serialize(ref MessagePackWriter writer, double4x2 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 8);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double4x2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double4x2(v);
+                default:
+                    var value = default(double4x2);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 8);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double4x3Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double4x3>
+    {
+        public void Serialize(ref MessagePackWriter writer, double4x3 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 12);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double4x3 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double4x3(v);
+                default:
+                    var value = default(double4x3);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 12);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
+        }
+    }
+
+    public sealed class Double4x4Formatter : MatrixFormatterBase<double>, IMessagePackFormatter<double4x4>
+    {
+        public void Serialize(ref MessagePackWriter writer, double4x4 value, MessagePackSerializerOptions options)
+        {
+            var span = MemoryMarshal.CreateReadOnlySpan(ref value.c0.x, 16);
+            base.Serialize(ref writer, span, options);
+        }
+
+        public double4x4 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.IsNil)
+            {
+                throw new InvalidOperationException("typecode is null, struct not supported");
+            }
+
+            var length = reader.ReadArrayHeader();
+            switch (length)
+            {
+                case 1:
+                    var formatter = options.Resolver.GetFormatterWithVerify<double>();
+                    var v = formatter.Deserialize(ref reader, options);
+                    return new double4x4(v);
+                default:
+                    var value = default(double4x4);
+                    var span = MemoryMarshal.CreateSpan(ref value.c0.x, 16);
+                    base.Deserialize(ref reader, span, length, options);
+                    return value;
+            }
         }
     }
 
